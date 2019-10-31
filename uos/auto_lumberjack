@@ -1,0 +1,162 @@
+//Title: Recalling Lumberjack
+//Description: Recalling Lumberjack. Must have a Double Axe.
+//You will need a book with the default rune marked right next to your wood storage.
+//All Books must have 16 runes to run properly!!
+//To add more books simply add 'Wood4' findalias and to pushlist
+removelist 'Runes'
+removelist 'WoodBook'
+@clearjournal
+//setlogs
+if not listexists 'Logs'
+  createlist 'Logs'
+  pushlist 'Logs' 0x1bdd
+endif
+//off
+if not @findalias 'Wood Storage'
+  promptalias 'Wood Storage'
+endif
+pause 250
+if not @findobject 'Wood1'
+  promptalias 'Wood1'
+endif
+if not @findobject 'Wood2'
+  promptalias 'Wood2'
+endif
+pause 250
+if not @findobject 'HomeWood'
+  promptalias 'HomeWood'
+endif
+pause 250
+if not listexists 'WoodBook'
+  createlist 'WoodBook'
+endif
+pause 250
+if list 'WoodBook' == 0
+  pushlist 'WoodBook' 'Wood1'
+  pushlist 'WoodBook' 'Wood2'
+endif
+pause 250
+if @findtype '0x1443' 'any' 'backpack' 'any' '2' or findlayer 'self' '2'
+  setalias 'Axe' 'found'
+  headmsg 'Axe Found'
+else
+  headmsg 'No Axe Found'
+  pause 800
+endif
+pause 250
+if not listexists 'Runes'
+  createlist 'Runes'
+endif
+pause 250
+if list 'Runes' == 0
+  pushlist 'Runes' 50
+  pushlist 'Runes' 51
+  pushlist 'Runes' 52
+  pushlist 'Runes' 53
+  pushlist 'Runes' 54
+  pushlist 'Runes' 55
+  pushlist 'Runes' 56
+  pushlist 'Runes' 57
+  pushlist 'Runes' 58
+  pushlist 'Runes' 59
+  pushlist 'Runes' 60
+  pushlist 'Runes' 61
+  pushlist 'Runes' 62
+  pushlist 'Runes' 63
+  pushlist 'Runes' 64
+  pushlist 'Runes' 65
+endif
+pause 250
+for 0 to WoodBook
+  for 0 to 'Runes'
+    pause 500
+    @clearjournal
+    pause 500
+    useobject WoodBook[]
+    waitforgump 0x59 5000
+    replygump 0x59 Runes[]
+    pause 4000
+    if injournal 'blocked' 'system'
+      @clearjournal
+      replay
+    endif
+    pause 250
+    //tells you which rune you are on, see runelist above
+    sysmsg 'Rune' 33
+    sysmsg Runes[] 33
+    pause 2000
+    while not @injournal 'not enough wood here' 'system'
+      if not @findlayer 'self' '2'
+        equipitem 'Axe' '2'
+        pause 800
+      endif
+      //use axe to western tile until specified weight is reached
+      pause 300
+      useobject 'Axe'
+      waitfortarget 1000
+      targettileoffset -1 0 0
+      pause 2000
+      //chop wood
+      while @findtype '0x1bdd' 'any' 'backpack' 'any' 'any'
+        @setalias 'Logs' 'Found'
+        useobject 'Axe'
+        autotargetobject 'Logs'
+        pause 250
+      endwhile
+      //Snake check
+      if @injournal 'dislodged' 'system'
+        headmsg 'SNAKE!!!'
+        headmsg 'Kill IT!!'
+        pause 60000
+        @clearjournal
+      endif
+      pause 250
+      // once weight is reached go home, if getting overweight, lower it
+      if weight > '500'
+        useobject 'HomeWood'
+        waitforgump 0x59 5000
+        replygump 0x59 50
+        pause 2000
+        //put up Wood
+        while @findtype '0x1bd7' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        while @findtype '0x318f' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        while @findtype '0x3199' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        while @findtype '0x3190' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        while @findtype '0x2f5f' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        while @findtype '0x3191' 'any' 'backpack' 'any' '2'
+          moveitem 'found' 'Wood Storage'
+          pause 800
+        endwhile
+        pause 250
+        //recall back to where you were
+        useobject WoodBook[]
+        waitforgump 0x59 5000
+        replygump 0x59 Runes[]
+        pause 2000
+      endif
+    endwhile
+    pause 250
+  endfor
+  poplist 'Runes' 'front'
+endfor
+//recall home so Wood container is found
+pause 1000
+cast 'recall'
+autotargetobject 'HomeWood'
+pause 4000
+poplist 'WoodBook' 'front'
