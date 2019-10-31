@@ -3,6 +3,7 @@
 //You will need a book with the default rune marked right next to your wood storage.
 //All Books must have 16 runes to run properly!!
 //To add more books simply add 'Wood4' findalias and to pushlist
+//This is set to farm trees to the west. If you want a different direction try a different one of these (0 -1 0, 0 1 0, -1 0 0, 1 0 0)
 removelist 'Runes'
 removelist 'WoodBook'
 @clearjournal
