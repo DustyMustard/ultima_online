@@ -1,0 +1,5 @@
+if not hidden 'self'
+  autotargetself
+  cast 'Invisibility'
+  pause 2500
+endif
