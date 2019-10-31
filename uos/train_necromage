@@ -1,0 +1,164 @@
+//Necro Mage in a night
+//wille GM magery, necro, ss, eval, med, focus, resist in a single run
+//By Magus Zeal
+while skill 'magery' < 45
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Bless"
+  pause 3000
+endwhile
+while skill 'magery' < 55
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Mana Drain"
+  pause 3500
+endwhile
+while skill 'magery' < 65
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Paralyze"
+  pause 3500
+endwhile
+while skill 'magery' < 75
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Reveal"
+  pause 4000
+endwhile
+while skill 'magery' < 90
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Mana Vampire"
+  pause 4000
+endwhile
+while skill 'magery' < 100
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  cast "Earthquake"
+  pause 4500
+endwhile
+while skill 'necromancy' < 50
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  autotargetself
+  cast "Pain Spike"
+  pause 3000
+endwhile
+while skill 'necromancy' < 70
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  cast "Horrific Beast"
+  pause 3500
+endwhile
+while skill 'necromancy' < 90
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  cast "Wither"
+  pause 3500
+endwhile
+while skill 'necromancy' < 100
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  if hits < 50
+    autotargetself
+    cast "Greater Heal"
+    pause 1000
+  endif
+  cast "Lich Form"
+  pause 4000
+endwhile
+while skill 'resisting spells' < 100
+  if hits < 50
+    autotargetself
+    cast 'greater heal'
+    pause 3000
+  endif
+  if mana < 50
+    useskill 'meditation'
+    while mana < maxmana
+    endwhile
+  endif
+  autotargetself
+  cast 'pain spike'
+  pause 1000
+endwhile
