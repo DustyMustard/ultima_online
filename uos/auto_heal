@@ -1,0 +1,2 @@
+if hits 'target' < 60; bigheal 'target'; endif;
+pause 250
