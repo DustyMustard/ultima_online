@@ -1,0 +1,8 @@
+if not @findobject 'pet'
+  promptalias 'pet'
+endif
+while skill 'animal taming' < 120
+  autotargetobject 'pet'
+  cast 'combat training'
+  pause 4000
+endwhile
