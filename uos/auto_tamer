@@ -1,0 +1,191 @@
+// Author: Di
+// Description: find, chase and tame nearby pets accordingly to skill level
+// v2.1: pet release and tamed detection improvements
+// v2.0: improved pets list and created unstuck pathfind heuristic
+// Configure skill limit      ?
+if skill! 'animal taming' >= 115
+  setskill 'animal taming' 'locked'
+  stop
+endif
+@createlist 'pets'
+@clearlist 'pets'
+if skill 'animal taming' < 60
+  // Eagle
+  pushlist 'pets' 0x5
+  // Goat
+  pushlist 'pets' 0xd1
+  // Pig
+  pushlist 'pets' 0xcb
+  pushlist 'pets' 0x122
+  // Hind
+  pushlist 'pets' 0xed
+  // Timber wolf
+  pushlist 'pets' 0xe1
+  // Llama
+  pushlist 'pets' 0xdc
+  // Horse
+  pushlist 'pets' 0xcc
+  pushlist 'pets' 0xe2
+  pushlist 'pets' 0xe4
+  pushlist 'pets' 0xc8
+  pushlist 'pets' 0x3e9f
+  pushlist 'pets' 0x3ea0
+  pushlist 'pets' 0x3ea1
+  pushlist 'pets' 0x3ea2
+  // Cow
+  pushlist 'pets' 0xe7
+  pushlist 'pets' 0xd8
+  // Bear
+  pushlist 'pets' 0xa7
+  pushlist 'pets' 0xd3
+  // Cougar
+  pushlist 'pets' 0x3f
+elseif skill 'animal taming' < 75
+  // Grizzly Bear
+  pushlist 'pets' 0xd4
+  // Grey Wolf
+  pushlist 'pets' 0x1b
+  pushlist 'pets' 0x19
+  // Snow Leopard
+  pushlist 'pets' 0x41
+  pushlist 'pets' 0x40
+  // Walrus
+  pushlist 'pets' 0xdd
+  // Polar Bear
+  pushlist 'pets' 0xd5
+  // Great Hart
+  pushlist 'pets' 0xea
+elseif skill 'animal taming' < 95.1
+  // Gaman
+  pushlist 'pets' 0xf8
+  // Bull
+  pushlist 'pets' 0xe8
+  pushlist 'pets' 0xe9
+  // Great Hart
+  pushlist 'pets' 0xea
+  // White Wolf
+  pushlist 'pets' 0x25
+  pushlist 'pets' 0x22
+  // Snow Leopard
+  pushlist 'pets' 0x41
+  pushlist 'pets' 0x40
+else
+  // Bull
+  pushlist 'pets' 0xe8
+  pushlist 'pets' 0xe9
+  // Unicorn
+  pushlist 'pets' 0x7a
+  // Ki-rin
+  pushlist 'pets' 0x84
+endif
+if not listexists 'errors'
+  createlist 'errors'
+  pushlist 'errors' 'too many owners'
+  pushlist 'errors' 'only be tamed by'
+  pushlist 'errors' 'no chance of taming'
+  pushlist 'errors' 'looks tame already'
+  //pushlist 'errors' 'clear path to the animal'
+  pushlist 'errors' 'cannot be seen'
+endif
+@createlist 'unstuck'
+if list 'unstuck' == 0
+  pushlist 'unstuck' 'east'
+  pushlist 'unstuck' 'west'
+  pushlist 'unstuck' 'south'
+  pushlist 'unstuck' 'north'
+endif
+// Search
+if not @findobject 'pet'
+  for 0 to 'pets'
+    if @findtype 'pets[]' 'any' 'ground'
+      @settimer 'stuck' 0
+      @setalias 'pet' 'found'
+      break
+    endif
+  endfor
+else
+  // Pathfind
+  @settimer 'pathfind' 0
+  while @findobject 'pet' and not @inrange 'pet' 2
+    if dead
+      break
+    elseif @timer 'pathfind' >= 5000
+      // Diverge
+      if direction == 0
+        @poplist 'unstuck' 'north'
+      elseif direction == 2
+        @poplist 'unstuck' 'east'
+      elseif direction == 4
+        @poplist 'unstuck' 'south'
+      elseif direction == 6
+        @poplist 'unstuck' 'west'
+      endif
+      // Unstuck
+      if list 'unstuck' != 0
+        for 5
+          run 'unstuck[0]'
+          pause 100
+        endfor
+        poplist 'unstuck' 'front'
+      endif
+      break
+    elseif @x 'pet' > x 'self' and @y 'pet' > y 'self'
+      run 'southeast'
+    elseif @x 'pet' < x 'self' and @y 'pet' > y 'self'
+      run 'southwest'
+    elseif @x 'pet' > x 'self' and @y 'pet' < y 'self'
+      run 'northeast'
+    elseif @x 'pet' < x 'self' and @y 'pet' < y 'self'
+      run 'northwest'
+    elseif @x 'pet' > x 'self' and @y 'pet' == y 'self'
+      run 'east'
+    elseif @x 'pet' < x 'self' and @y 'pet' == y 'self'
+      run 'west'
+    elseif @x 'pet' == x 'self' and @y 'pet' > y 'self'
+      run 'south'
+    elseif @x 'pet' == x 'self' and @y 'pet' < y 'self'
+      run 'north'
+    endif
+    pause 100
+  endwhile
+  if @inrange 'pet' 2
+    // Tame
+    clearjournal
+    useskill 'animal taming'
+    waitfortarget 1000
+    target! 'pet'
+    // Handle
+    if @property '(tame)' 'pet'
+      for 5
+        if @gumpexists 0x909cc741 or not @findobject 'pet'
+          break
+        elseif dead or followers == 0
+          break
+        elseif @name 'pet' != 'NotMyPresident'
+          rename 'pet' 'NotMyPresident'
+        else
+          msg 'NotMyPresident release'
+        endif
+        pause 500
+      endfor
+      replygump 0x909cc741 2
+      sysmsg 'Success: tamed and released!' 88
+      ignoreobject 'pet'
+      @unsetalias 'pet'
+    else
+      @settimer 'stuck' 0
+      for 0 to 'errors'
+        if @injournal 'errors[]'
+          sysmsg 'Ignore: error message!' 25
+          ignoreobject 'pet'
+          @unsetalias 'pet'
+          break
+        endif
+      endfor
+    endif
+  elseif @timer 'stuck' >= 20000
+    sysmsg 'Ignore: stuck timeout!' 25
+    ignoreobject 'pet'
+    @unsetalias 'pet'
+  endif
+endif
