@@ -1,0 +1,26 @@
+if @poisoned 'self'
+  @autotargetself
+  cast 'arch cure'
+  pause 1000
+elseif @hits < 90
+  @autotargetself
+  cast 'greater heal'
+  pause 2000
+endif
+if @findobject 'Pet1' and @findobject 'Pet2'
+  if hits 'Pet1' < maxhits 'pet1' or hits 'Pet2' < maxhits 'pet2'
+    if diffhits 'Pet1' > diffhits 'Pet2' and @inrange 'Pet1' 8
+      bigheal 'pet1'
+      pause 2000
+    elseif @inrange 'Pet2' 8 and hits 'Pet2' < 90
+      bigheal 'pet2'
+      pause 2000
+    endif
+  elseif @findobject 'pet1' and hits 'pet1' < 90
+    bigheal 'pet1'
+    pause 2000
+  elseif @findobject 'pet2' and hits 'pet2' < 90
+    bigheal 'pet2'
+    pause 2000
+  endif
+endif
