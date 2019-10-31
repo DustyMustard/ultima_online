@@ -4,7 +4,7 @@
 
 Some other resources to look through:
 
-Razor Enhanced
+Razor Enhanced http://razorenhanced.net/
 
 https://github.com/abelgoodwin1988/razorenhancedscripts
 
