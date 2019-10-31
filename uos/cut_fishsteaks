@@ -1,0 +1,60 @@
+while @findtype '0x9cc' 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x9cc
+  pause 500
+endwhile
+while @findtype '0x9cf' 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x9cf
+  pause 500
+endwhile
+while @findtype '0x9ce' 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x9ce
+  pause 500
+endwhile
+while @findtype '0x9cd' 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x9cd
+  pause 500
+endwhile
+while @findtype '0x44c5' 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x44c5
+  pause 500
+endwhile
+while @findtype '0x4306 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x4306
+  pause 500
+endwhile
+while @findtype '0x44c6 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x44c6
+  pause 500
+endwhile
+while @findtype '0x4307 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x4307
+  pause 500
+endwhile
+while @findtype '0x4303 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x4303
+  pause 500
+endwhile
+while @findtype '0x44c4 'any' 'backpack' 'any' '2'
+  usetype 0xf52
+  waitingfortarget 15000
+  targettype! 0x44c4
+  pause 500
+endwhile
