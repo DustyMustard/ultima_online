@@ -6,6 +6,8 @@ Some other resources to look through:
 
 Razor Enhanced http://razorenhanced.net/
 
+https://bitbucket.org/Alexdan/re-script-library/src/master/
+
 https://github.com/abelgoodwin1988/razorenhancedscripts
 
 https://github.com/feboss/RazorEnhanced
