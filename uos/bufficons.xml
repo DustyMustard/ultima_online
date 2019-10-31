@@ -1,0 +1,125 @@
+<bufficons>
+   <icon id="1001" name="Dismount Prevention"/>
+   <icon id="1002" name="No Rearm"/>
+   <icon id="1005" name="Night Sight"/>
+   <icon id="1006" name="Death Strike"/>
+   <icon id="1007" name="Evil Omen"/>
+   <icon id="1008" name="Honored"/>
+   <icon id="1009" name="Achieve Perfection"/>
+   <icon id="1010" name="Divine Fury"/>
+   <icon id="1011" name="Enemy Of One"/>
+   <icon id="1012" name="Hiding"/>
+   <icon id="1013" name="Meditation"/>
+   <icon id="1014" name="Blood Oath Caster"/>
+   <icon id="1015" name="Blood Oath"/>
+   <icon id="1016" name="Corpse Skin"/>
+   <icon id="1017" name="Mind rot"/>
+   <icon id="1018" name="Pain Spike"/>
+   <icon id="1019" name="Strangle"/>
+   <icon id="1020" name="Gift Of Renewal"/>
+   <icon id="1021" name="Attune Weapon"/>
+   <icon id="1022" name="Thunderstorm"/>
+   <icon id="1023" name="Essence Of Wind"/>
+   <icon id="1024" name="Ethereal Voyage"/>
+   <icon id="1025" name="Gift Of Life"/>
+   <icon id="1026" name="Arcane Empowerment"/>
+   <icon id="1027" name="Mortal Strike"/>
+   <icon id="1028" name="Reactive Armor"/>
+   <icon id="1029" name="Protection"/>
+   <icon id="1030" name="Arch Protection"/>
+   <icon id="1031" name="Magic Reflection"/>
+   <icon id="1032" name="Incognito"/>
+   <icon id="1033" name="Disguised"/>
+   <icon id="1034" name="Animal Form"/>
+   <icon id="1035" name="Polymorph"/>
+   <icon id="1036" name="Invisibility"/>
+   <icon id="1037" name="Paralyze"/>
+   <icon id="1038" name="Poison"/>
+   <icon id="1039" name="Bleed"/>
+   <icon id="1040" name="Clumsy"/>
+   <icon id="1041" name="Feeblemind"/>
+   <icon id="1042" name="Weaken"/>
+   <icon id="1043" name="Curse"/>
+   <icon id="1044" name="Mass Curse"/>
+   <icon id="1045" name="Agility"/>
+   <icon id="1046" name="Cunning"/>
+   <icon id="1047" name="Strength"/>
+   <icon id="1048" name="Bless"/>
+   <icon id="1049" name="Sleep"/>
+   <icon id="1050" name="Stone Form"/>
+   <icon id="1051" name="Spell Plague"/>
+   <icon id="1052" name="Gargoyle Berserk"/>
+   <icon id="1054" name="Fly"/>
+   <icon id="1055" name="Inspire"/>
+   <icon id="1056" name="Invigorate"/>
+   <icon id="1057" name="Resilience"/>
+   <icon id="1058" name="Perseverance"/>
+   <icon id="1059" name="Tribulation"/>
+   <icon id="1060" name="Despair"/>
+   <icon id="1061" name="Arcane Empowerment2"/>
+   <icon id="1062" name="Magic Fish Buff"/>
+   <icon id="1063" name="Hit Lower Attack"/>
+   <icon id="1064" name="Hit Lower Defense"/>
+   <icon id="1065" name="Hit Dual Wield"/>
+   <icon id="1066" name="Block"/>
+   <icon id="1067" name="Defense Mastery"/>
+   <icon id="1068" name="Despair Bard"/>
+   <icon id="1069" name="Healing Skill"/>
+   <icon id="1070" name="Spell Focusing"/>
+   <icon id="1071" name="Spell Focusing Debuff"/>
+   <icon id="1072" name="Rage Focusing Debuff"/>
+   <icon id="1073" name="Rage Focusing"/>
+   <icon id="1074" name="Warding"/>
+   <icon id="1075" name="Tribulation Bard"/>
+   <icon id="1076" name="Force Arrow"/>
+   <icon id="1077" name="Disarm"/>
+   <icon id="1078" name="Surge"/>
+   <icon id="1079" name="Feint"/>
+   <icon id="1080" name="Talon Strike"/>
+   <icon id="1081" name="Psychic Attack"/>
+   <icon id="1082" name="Consecrate Weapon"/>
+   <icon id="1083" name="Grapes Of Wrath"/>
+   <icon id="1084" name="Enemy Of One Debuff"/>
+   <icon id="1085" name="Horrific Beast"/>
+   <icon id="1086" name="Lich Form"/>
+   <icon id="1087" name="Vampiric Embrace"/>
+   <icon id="1088" name="Curse Weapon"/>
+   <icon id="1089" name="Reaper Form"/>
+   <icon id="1090" name="Immolating Weapon"/>
+   <icon id="1091" name="Enchant"/>
+   <icon id="1092" name="Honorable Execution"/>
+   <icon id="1093" name="Confidence"/>
+   <icon id="1094" name="Evasion"/>
+   <icon id="1095" name="Counter Attack"/>
+   <icon id="1096" name="Lightning Strike"/>
+   <icon id="1097" name="Momentum Strike"/>
+   <icon id="1098" name="Orange Petals"/>
+   <icon id="1099" name="Rose Of Trinsic Petals"/>
+   <icon id="1100" name="Poison Resistance"/>
+   <icon id="1101" name="Veterinary"/>
+   <icon id="1102" name="Perfection"/>
+   <icon id="1103" name="Honored2"/>
+   <icon id="1104" name="Mana Phase"/>
+   <icon id="1105" name="Fandancer Fan Fire"/>
+   <icon id="1106" name="Rage"/>
+   <icon id="1107" name="Webbing"/>
+   <icon id="1108" name="Medusa Stone"/>
+   <icon id="1109" name="Dragon Slasher Fear"/>
+   <icon id="1110" name="Aura Of Nausea"/>
+   <icon id="1111" name="Howl Of Cacophony"/>
+   <icon id="1112" name="Gaze Despair"/>
+   <icon id="1113" name="Hiryu Physical Resistance"/>
+   <icon id="1114" name="Rune Beetle Corruption"/>
+   <icon id="1115" name="Bloodworm Anemia"/>
+   <icon id="1116" name="Rotworm Blood Disease"/>
+   <icon id="1117" name="Skill Use Delay"/>
+   <icon id="1118" name="Faction Stat Loss"/>
+   <icon id="1119" name="Heat Of Battle"/>
+   <icon id="1120" name="Criminal"/>
+   <icon id="1121" name="Armor Pierce"/>
+   <icon id="1122" name="Splintering"/>
+   <icon id="1123" name="Swing Speed Debuff"/>
+   <icon id="1124" name="Wraith Form"/>
+   <icon id="1125" name="Honorable Execution2"/>
+   <icon id="1126" name="City Trade Deal"/>
+</bufficons>
