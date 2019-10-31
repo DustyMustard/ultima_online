@@ -1,0 +1,4 @@
+cast "NetherBlastSpell"
+waitfortarget 1500
+targettype 0x92
+pause 500
