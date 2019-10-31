@@ -1,0 +1,11 @@
+auto bandage
+if not @findobject 'firstaidbelt'
+  headmsg 'Target your first aid belt'
+  promptalias 'firstaidbelt'
+endif
+if @findtype 0xe21 'any' 'firstaidbelt'
+  useobject 'found'
+  waitfortarget 2000
+  target! '0x61077d6'
+  pause 3000
+endif
