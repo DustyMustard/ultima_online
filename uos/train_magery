@@ -1,0 +1,46 @@
+//Author: Magus Zeal
+//Train Magery based on UOGuide recommendations
+//Run with loop checked
+if mana < 20
+  useskill 'meditation'
+  while mana < maxmana
+  endwhile
+endif
+if hits < 40
+  cast "Greater Heal"
+  waitingfortarget
+  target 'self'
+  pause 1000
+endif
+if skill 'magery' < 45
+  cast "Bless"
+  waitingfortarget
+  target 'self'
+  pause 3000
+elseif skill 'magery' < 55
+  cast "Mana Drain"
+  waitingfortarget
+  target 'self'
+  pause 3500
+elseif skill 'magery' < 65
+  cast "Paralyze"
+  waitingfortarget
+  target 'self'
+  pause 3500
+elseif skill 'magery' < 75
+  cast "Reveal"
+  waitingfortarget
+  target 'self'
+  pause 4000
+elseif skill 'magery' < 90
+  cast "Mana Vampire"
+  waitingfortarget
+  target 'self'
+  pause 4000
+elseif skill 'magery' < 100
+  cast "Earthquake"
+  waitingfortarget
+  pause 4500
+endif
+//add one more iteration of Earthquake, or use masteries for 100-120
+stop
