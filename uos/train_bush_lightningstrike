@@ -1,0 +1,6 @@
+if @injournal 'You attack with lightning precision!' or @injournal 'parried'
+  if mana > 10
+    cast "Lightning Strike"
+    clearjournal
+  endif
+endif
