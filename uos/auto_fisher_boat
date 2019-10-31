@@ -1,0 +1,32 @@
+clearjournal
+if skill 'fishing' < 120
+  while not @injournal 'biting here'
+    if useobject '0x4008de36'
+      waitfortarget 2000
+      targettileoffset! -4 -4 -3
+      pause 9000
+    endif
+    if useobject '0x4008de36'
+      waitfortarget 2000
+      targettileoffset! -4 4 -3
+      pause 9000
+    endif
+    if useobject '0x4008de36'
+      waitfortarget 2000
+      targettileoffset! 4 -4 -3
+      pause 9000
+    endif
+    if useobject '0x4008de36'
+      waitfortarget 2000
+      targettileoffset! 4 4 -3
+      pause 9000
+    endif
+  endwhile
+  for 4
+    msg 'forward one'
+    pause 1000
+  endfor
+else
+  headmsg 'Fishing complete!'
+  stop
+endif
