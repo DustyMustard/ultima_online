@@ -1,0 +1,112 @@
+// This is Cono's Sampire Background Macro //
+// You may need to adjust some things to suit your sampire needs. //
+//Create timers
+if not timerexists 'Confidence'
+  createtimer 'Confidence'
+  settimer 'Confidence' 0
+elseif hits < 85
+  if timer 'Confidence' > 10000
+    if mana > 12
+      cast 'Confidence'
+      settimer 'Confidence' 0
+      pause 1000
+    endif
+  endif
+endif
+if not timerexists 'ConsecrateWeapon'
+  createtimer 'ConsecrateWeapon'
+  settimer 'ConsecrateWeapon' 0
+  cast 'Consecrate Weapon'
+elseif timer 'ConsecrateWeapon' > 9000
+  if mana > 6
+    cast 'Consecrate Weapon'
+    settimer 'ConsecrateWeapon' 0
+  endif
+endif
+if timerexists 'Primary'
+  settimer 'Primary' 0
+else
+  createtimer 'Primary'
+  settimer 'Primary' 0
+endif
+if not timerexists 'EnemyQueue'
+  createtimer 'EnemyQueue'
+  settimer 'EnemyQueue' 0
+endif
+if not timerexists 'CounterAttack'
+  createtimer 'CounterAttack'
+  settimer 'CounterAttack' 0
+  cast 'Counter Attack'
+elseif timer 'CounterAttack' > 12500
+  settimer 'CounterAttack' 0
+  cast 'Counter Attack'
+elseif @injournal 'attack with lightning' 'system'
+  settimer 'CounterAttack' 0
+  cast 'Counter Attack'
+  clearjournal
+  pause 1000
+endif
+//if not timerexists 'StrPot'
+//  createtimer 'StrPot'
+//  settimer 'StrPot' 116000
+//elseif timer 'StrPot' > 115000
+//  settimer 'StrPot' 0
+//  usetype 0xf09
+//  pause 1000
+//endif
+if not timerexists 'AgiPot'
+  createtimer 'AgiPot'
+  settimer 'AgiPot' 116000
+elseif timer 'AgiPot' > 115000
+  settimer 'AgiPot' 0
+  usetype 0xf08
+  pause 1000
+endif
+pause 1000
+//Potion chugger keeps Str/Dex boosted
+// Keep up swing speed
+if stam < 50
+  if mana > 6
+    cast 'Divine Fury'
+pause 500
+  endif
+endif
+// Keep me alive
+if buffexists "Blood Oath"
+  if skill 'Resisting Spells' > 99.9
+  elseif skill 'Resisting spells' < 100
+    warmode 'off'
+    pause 10000
+    warmode 'on'
+  endif
+endif
+if hits < 0
+  if mana > 6
+    cast 'Close Wounds'
+    waitingfortarget 15000
+    target! 'self'
+    pause 1000
+  endif
+endif
+// Keep ability going
+if mana > 12
+  @setability! 'primary'  on
+  settimer 'Primary' 0
+elseif timer 'Primary' > 1000
+  if mana > 5
+    @setability! 'primary' on
+    settimer 'Primary' 0
+  endif
+endif
+// Keep me in combat
+if timer 'EnemyQueue' > 250
+  @getenemy  'Enemy' 'closest' 'criminal'
+  target! 'enemy'
+  attack! 'enemy'
+  settimer 'TargetNearest' 0
+endif
+if @injournal 'You gaze upon the' 'system'
+  warmode 'on'
+  @getenemy  'Enemy' 'closest' 'criminal' 'murderer'
+  target! 'enemy'
+  attack! 'enemy'
