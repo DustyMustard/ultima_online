@@ -1,0 +1,19 @@
+//get target
+getenemy 'murderer' 'enemy' 'criminal' 'gray' 'closest'
+//activate skill and attack if target in range
+if @findobject 'enemy' and inrange 'enemy' 1
+  if hits 'enemy' == maxhits 'enemy'
+    virtue 'honor'
+    waitfortarget 500
+    target! 'enemy'
+  endif
+  cast "Momentum Strike"
+  attack 'enemy'
+endif
+pause 1500
+//standard sampire buff loop
+if not buffexists 'consecrate weapon'
+  cast 'consecrate weapon'
+elseif not buffexists 'counter attack'
+  cast 'counter attack'
+endif
