@@ -22,6 +22,9 @@ https://github.com/rduckey/enhanced_razor_scripts/tree/master/trainers
 
 https://bitbucket.org/Juggalicious/skill-training/downloads/
 
+OrionUO
+
+https://tal-dor.github.io/OrionUO-docs/
 
 UOS
 
