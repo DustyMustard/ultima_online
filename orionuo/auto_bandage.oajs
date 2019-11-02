@@ -1,0 +1,32 @@
+function autoBandageSelf() {
+    var inHealing = false;
+    var beginHealingTs
+    var pattern = 'The being is not damaged|You heal what little damage|You apply the bandages|You cannot heal|You finish applying the bandages|You have failed to cure';
+    
+    while (true) {
+        if (!Player.Dead()) {
+            var hits = Player.Hits();
+            var maxHists = Player.MaxHits();
+            
+            var bandageCount = Orion.Count('bandage', 0xFFFF, self, null, true);
+            
+            if (!inHealing && hits < maxHists && bandageCount > 0) {
+                Orion.Print(0x0f0, 'Hits: ' + hits + ', usings bandage [' + bandageCount + ']...');
+                Orion.CharPrint(Player.Serial(), 0x0a0f, 'Healing...');
+                
+                beginHealingTs = Orion.Now();
+                inHealing = true;
+                Orion.UseType('bandage');
+                Orion.WaitTargetObject('self');
+            } else if (inHealing) {
+                var result = Orion.InJournal(pattern, 'my|sys', 0, 0xFFFF, Orion.Now() - 1000);
+                
+                if (result || Orion.Now() - beginHealingTs >= 7000) {
+                    inHealing = false;
+                }
+            }
+        }
+        
+        Orion.Wait(1000);
+    }
+}
