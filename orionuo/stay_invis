@@ -1,0 +1,10 @@
+       function invis() {
+        while (true) {
+            if (!Player.Hidden()) {
+                Orion.Cast('44');
+                Orion.WaitForTarget(5000)
+                Orion.TargetObject('self')
+                Orion.Wait(250)
+        }
+    }
+}
