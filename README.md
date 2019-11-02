@@ -26,6 +26,8 @@ OrionUO
 
 https://tal-dor.github.io/OrionUO-docs/
 
+https://github.com/Tal-Dor/OrionUO-scripts
+
 UOS
 
 https://www.uoforum.com/threads/smms-public-skill-training-macros.88048/
