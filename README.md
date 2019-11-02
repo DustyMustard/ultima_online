@@ -1,4 +1,4 @@
-##Ultima Online Scripts for UOS/Steam and Razor Enhanced. 99% of these are partially/completly not made by me. The UOSteam scrips were mostly used on freeshards, so viability on OSI is hit or miss. Razor Enhanced scripts on the other hand were tested on OSI.
+##Ultima Online Scripts for OrionUO, UOS/Steam and Razor Enhanced. 99% of these are partially/completly not made by me. Some might be from freeshards and need changes for OSI.
 
 //
 
