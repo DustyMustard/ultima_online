@@ -4,7 +4,14 @@
 
 Some other resources to look through:
 
-Razor Enhanced http://razorenhanced.net/
+
+**OrionUO** https://github.com/hotride/orionuo
+
+https://tal-dor.github.io/OrionUO-docs/
+
+https://github.com/Tal-Dor/OrionUO-scripts
+
+**Razor Enhanced** http://razorenhanced.net/
 
 https://bitbucket.org/Alexdan/re-script-library/src/master/
 
@@ -22,13 +29,7 @@ https://github.com/rduckey/enhanced_razor_scripts/tree/master/trainers
 
 https://bitbucket.org/Juggalicious/skill-training/downloads/
 
-OrionUO
-
-https://tal-dor.github.io/OrionUO-docs/
-
-https://github.com/Tal-Dor/OrionUO-scripts
-
-UOS
+**UOS**
 
 https://www.uoforum.com/threads/smms-public-skill-training-macros.88048/
 
