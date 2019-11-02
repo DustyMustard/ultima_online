@@ -12,7 +12,7 @@ https://github.com/abelgoodwin1988/razorenhancedscripts
 
 https://github.com/feboss/RazorEnhanced
 
-https://github.com/matsamilla/Razor-Enhanced
+https://github.com/matsamilla?tab=repositories
 
 https://github.com/getoldgaming/razor-enhanced-
 
