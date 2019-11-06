@@ -36,3 +36,7 @@ https://www.uoforum.com/threads/smms-public-skill-training-macros.88048/
 https://github.com/her/uosteam
 
 https://pastebin.com/u/SilvertigerL_C
+
+**Enhanced Map**
+
+https://github.com/andreakarasho/EnhancedMap
