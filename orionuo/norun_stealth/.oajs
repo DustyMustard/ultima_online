@@ -1,0 +1,14 @@
+function Hide(){
+    while (true){
+        if (Player.Hidden())
+        {
+            Orion.OptionAlwaysRun(false);
+            while (Player.Hidden())
+            {
+                Orion.Wait(10);
+            }
+            Orion.OptionAlwaysRun(true);
+        }
+        Orion.Wait(10);
+    }
+}
