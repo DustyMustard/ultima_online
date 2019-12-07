@@ -1,0 +1,132 @@
+;=====================================================
+; Script Name: IDOC Timer
+; Author: Timbo Slice
+; Version: 1.00
+; Client Tested with: 7.0.11.4 (patch 38)
+; EUO version tested with: EasyUO v1.5 [Build 185]
+; Shard OSI / FS: OSI
+; Revision Date: 2/9/2011
+; Public Release: 2/9/2011
+; Global Variables Used: none
+; Purpose: Tells you when a house goes into the "IDOC" state
+;=====================================================
+; NOTES:
+; The script will keep you hidden while waiting for the house status
+; to change to in danger of collapse.  After the status changes to
+; in danger of collapse, the menu will display the time and will log
+; your character out.
+;=====================================================
+set %counter #scnt + 600
+gosub setsign
+display yesno Do you wish to keep your character hidden?
+  set %hidden #dispres
+event property %housesign
+if danger IN #property
+   {
+   display OK Hey, Dumbass! This house is already in danger of collapse!
+   halt
+   }
+gosub time #time 12
+set %starttime #result
+set %lasttoggle #result
+set %idoctime NOT , #spc , SOON , #spc , ENOUGH!!!
+gosub showmenu
+;=====================================================
+MainLoop:
+if H notin #CHARSTATUS && %hidden = yes
+   {
+   gosub checkhidden
+   }
+if %counter < #scnt
+   {
+   set %counter #scnt + 600
+   event macro 18 0 ; bow
+   gosub time #time 12
+   set %lasttoggle #result
+   gosub showmenu
+   }
+event property %housesign
+wait 10
+if danger IN #property
+   {
+   gosub time #time 12
+   set %idoctime #result
+   set %condition IDOC
+   gosub showmenu
+   gosub logout
+   halt
+   }
+goto MainLoop
+;=====================================================
+; Subs
+;=====================================================
+sub setsign
+display ok Please target the house sign that you wish to watch.$
+wait 10
+set #targcurs 1
+wait 10
+while #targcurs = 1
+  wait 1
+set %housesign #ltargetid
+set %condition Greatly , #spc , Worn
+return
+;=====================================================
+sub checkhidden
+hidden:
+event macro 13 21
+wait 10s
+if H notin #CHARSTATUS
+   {
+   goto hidden
+   }
+return
+;=====================================================
+sub showmenu
+menu hide
+menu clear
+menu window title idoc
+menu window size 250 120
+menu window color $000000
+menu font color white
+menu font size 10
+menu font bgcolor $000000
+menu text stat 0 5 Char: #CHARNAME
+menu text stat 0 25 Status : %condition
+menu text stat 0 45 Start Time : %starttime
+menu text stat 0 65 Idoc Time : %idoctime
+menu text stat 0 85 Last toggle : %lasttoggle
+menu text stat 0 105
+menu show
+return
+;=====================================================
+sub time
+set %AMPM AM
+set %d1 %1 / 1 % 10
+set %d2 %1 / 10 % 10
+set %d3 %1 / 100 % 10
+set %d4 %1 / 1000 % 10
+set %d5 %1 / 10000 % 10
+set %d6 %1 / 100000 % 10
+set %tempampm %d6 , %d5
+if %tempampm > 12 && %2 = 12
+  {
+  set %AMPM PM
+  set %tempampm %tempampm - 12
+  }
+if %2 = 12
+  return %tempampm , : , %d4 , %d3 , : , %d2 , %d1 , #SPC , %AMPM
+return %tempampm , : , %d4 , %d3 , : , %d2 , %d1
+;=====================================================
+sub logout
+wait 1s
+event macro 8 1
+wait 5s
+set %clickx #contposx + 215
+set %clicky #contposy + 110
+click %clickx %clicky
+wait 5s
+set %clickx #contposx + 124
+set %clicky #contposy + 84
+click %clickx %clicky
+return
+;=====================================================

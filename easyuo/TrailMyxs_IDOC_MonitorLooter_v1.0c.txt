@@ -1,0 +1,745 @@
+;-----------------------------------------------------------
+; Script Name: TrailMyx's IDOC Monitor/Looter v1.0c
+; Author: TrailMyx
+; Version: 1.0c
+; Client Tested with: 5.0.2
+; EUO version tested with: 1.5 106
+; Shard: OSI, FS
+; Revision Date:  3/17/2007
+; Public Release: ...
+; Global Variables Used: None
+; Purpose:
+;   1) Will watch a house sign for changes to the status and log the
+;      progression of the collapse of a house.  This can help increase
+;      your chance to be physically available during the collapse since you
+;      will know the near exact time when the house changed to IDOC.
+;   2) Allow the user to enter a looting profile where individual items
+;      can be selected for looting.
+;   3) These items can be prioritized into two categories, normal and priority
+;   4) Priority items looting attempts are exhausted before proceeding to the
+;      normal loot list.
+;   5) If an item is found to be out of range, the character will PATHFIND
+;      to the item location so a drag may be attempted.
+;   6) Loot profile editor allows the user to quickly add/delete items
+;      from each looting profile
+;   7) These profiles may be saved to a configuration file so a script
+;      can be re-started and still have the profile available.  Also, this
+;      is useful for when you want to have two or more accounts sharing
+;      the same looting profile to increase your chances of accululating the
+;      IDOC loot.
+;   9) Optimized looter that searches your event pathfind path to be sure
+;      you don't pass something else that's on your list.
+;  10) Maintain hidden status before and after a looting session and during
+;      camping; you have to have hiding greater than 65.0.
+;
+;  This program wasn't really written to be sub-ed out, so everthing is
+;  accessed in std namespace and shared amongst the subs.
+;
+;-----------------------------------------------------------
+;
+; TrailMyx
+;
+set %delaytimer #SCNT
+set %delay_max 120 ; refresh every 2 minutes
+gosub AddUnderscore #SHARD
+set %shard #RESULT
+set %logfile c:\ , #RESULT , _collapselog , #dot , txt
+set %lootfile c:\ , #RESULT , _lootfile , #dot , txt
+
+gosub ConvertDailyTime #TIME
+set %ctime #RESULT
+gosub ConvertDate #DATE
+set %cdate #RESULT
+gosub AddUnderscore #CHARNAME
+set %charname #RESULT
+
+execute cmd.exe /c echo Date %cdate Time %ctime ----Program , #spc , start , #spc , %charname , - , %shard >> %logfile
+
+set %indexlist1 0
+set %indexlist2 0
+
+call %lootfile
+
+gosub showEUOMenu1
+
+str count %ITEMLIST1 _
+set %countlist1 #STRRES
+str count %ITEMLIST2 _
+set %countlist2 #STRRES
+
+if %countlist1 > 0
+  set %indexlist1 1
+if %countlist2 > 0
+  set %indexlist2 1
+  
+gosub UpdateItemScreen
+
+set %condition NONE
+set %monitor_active #FALSE
+
+set #MENUBUTTON N/A
+
+Camper_main_loop:
+  gosub StayOnline
+
+  if %monitor_active = #TRUE && %housesign <> N/A
+    gosub MonitorSign
+
+  if #MENUBUTTON = EUOButton10 ; Begin Monitoring
+  {
+    set #MENUBUTTON N/A
+    if %housesign = N/A
+    {
+      display ok You must first select a house to monitor.
+    }
+    else
+    {
+      menu Font BGColor BtnFace
+      if %monitor_active = #FALSE
+      {
+        menu Font BGColor BtnFace
+        menu delete EUOButton10
+        menu Button EUOButton10 176 84 95 25 Stop Monitoring
+        set %condition Refreshed
+        menu set EUOEdit9 %condition
+        set %monitor_active #TRUE
+        menu Font BGColor ScrollBar
+        menu set EUOEdit1 House sign monitoring active!
+      }
+      else
+      {
+        menu Font BGColor BtnFace
+        menu delete EUOButton10
+        menu Button EUOButton10 176 84 95 25 Start Monitoring
+        set %monitor_active #FALSE
+        menu Font BGColor ScrollBar
+        menu set EUOEdit1 House sign monitoring stopped!
+      }
+    }
+  }
+  if #MENUBUTTON = EUOButton3 ; Target Sign
+  {
+    set #MENUBUTTON N/A
+    set #TARGCURS 1
+    repeat
+    until #TARGCURS = 0
+
+    set %housesign #LTARGETID
+    event property %housesign
+    str pos #PROPERTY Name:
+    set %start #STRRES + 5
+    str del #PROPERTY 1 %start
+    set %tempstr #STRRES
+    str pos %tempstr $
+    set #STRRES #STRRES - 1
+    str left %tempstr #STRRES
+    menu set EUOEdit10 #STRRES
+    set %condition Refreshed
+  }
+  if #MENUBUTTON = EUOButton13 ; Begin looting
+  {
+    set #MENUBUTTON N/A
+    gosub StartLooting
+  }
+  if #MENUBUTTON = EUOButton1 ; Add Item
+  {
+    set #MENUBUTTON N/A
+    gosub AddItem
+  }
+  if #MENUBUTTON = EUOButton2 ; Add Priority Item
+  {
+    set #MENUBUTTON N/A
+    gosub AddPriorityItem
+  }
+  if #MENUBUTTON = EUOButton8 ; Delete Item
+  {
+    set #MENUBUTTON N/A
+    gosub DeleteItem
+  }         DeletePriorityItem
+  if #MENUBUTTON = EUOButton9 ; Delete Priority Item
+  {
+    set #MENUBUTTON N/A
+    gosub DeletePriorityItem
+  }
+  if #MENUBUTTON = EUOButton4 ; scroll normal left
+  {
+    set #MENUBUTTON N/A
+    if %indexlist1 > 0
+    {
+      set %indexlist1 %indexlist1 - 1
+      if %indexlist1 = 0
+        set %indexlist1 %countlist1
+      gosub UpdateItemScreen
+    }
+  }
+  if #MENUBUTTON = EUOButton5 ; scroll normal right
+  {
+    set #MENUBUTTON N/A
+    if %indexlist1 > 0
+    {
+      set %indexlist1 %indexlist1 + 1
+      if %indexlist1 > %countlist1
+        set %indexlist1 1
+      gosub UpdateItemScreen
+
+    }
+  }
+  if #MENUBUTTON = EUOButton6 ; priority normal left
+  {
+    set #MENUBUTTON N/A
+    if %indexlist2 > 0
+    {
+      set %indexlist2 %indexlist2 - 1
+      if %indexlist2 = 0
+        set %indexlist2 %countlist2
+      gosub UpdateItemScreen
+    }
+  }
+  if #MENUBUTTON = EUOButton7 ; priority normal right
+  {
+    set #MENUBUTTON N/A
+    if %indexlist2 > 0
+    {
+      set %indexlist2 %indexlist2 + 1
+      if %indexlist2 > %countlist2
+        set %indexlist2 1
+      gosub UpdateItemScreen
+    }
+  }
+  if #MENUBUTTON = EUOButton11 ; goto normal item location
+  {
+    gosub GetItemFindID %ITEMLIST1 %indexlist1
+    finditem #RESULT G
+    if #FINDKIND <> -1
+    {
+      event pathfind #FINDX #FINDY
+    }
+    set #MENUBUTTON N/A
+  }
+  if #MENUBUTTON = EUOButton12 ; goto normal item location
+  {
+    gosub GetItemFindID %ITEMLIST2 %indexlist2
+    finditem #RESULT G
+    if #FINDKIND <> -1
+    {
+      event pathfind #FINDX #FINDY
+    }
+    set #MENUBUTTON N/A
+  }
+  
+  if #MENUBUTTON = EUOButton14 ; save loot file
+  {
+    execute cmd.exe /c echo set , #SPC , % , ITEMLIST1 , #SPC , %ITEMLIST1 > %lootfile
+    execute cmd.exe /c echo set , #SPC , % , ITEMLIST2 , #SPC , %ITEMLIST2 >> %lootfile
+    set #MENUBUTTON N/A
+  }
+
+  menu set EUOEdit9 %condition  ; update condition.
+  
+  menu get EUOEdit8       ; check to see if delay timer has changed.
+  if #MENURES <> %delay_max
+  {
+    set %delay_max #MENURES
+    set %delaytimer #SCNT
+  }
+  
+  menu get EUOCheckBox1
+  if #MENURES = #TRUE
+  {
+    chooseskill HIDE
+    if #SKILL < 650
+    {
+      display ok You're hiding must be greater than 65.0 to use this feature.
+      menu set EUOCheckBox1 #FALSE
+    }
+    else
+    {
+      if H notin #CHARSTATUS
+      {
+        event macro 13 21
+        wait 20
+      }
+    }
+  }
+
+  goto Camper_main_loop
+  
+;--------- End of main -----------------------
+
+; %1 - string to mung
+sub AddUnderscore
+  set %tempstring %1
+  AddUnderscore_loop1:
+    str pos %tempstring #SPC
+    if #STRRES <> 0
+    {
+      set %val #STRRES - 1
+      str left %tempstring %val
+      set %left #STRRES
+      set %val %val + 1
+      str del %tempstring 1 %val
+      set %tempstring %left , _ , #STRRES
+      goto AddUnderscore_loop1
+    }
+return %tempstring
+;--------------------------------------------------
+sub UpdateItemScreen
+  menu set EUOEdit2 %countlist1
+  menu set EUOEdit3 %countlist2
+  menu set EUOEdit4 %indexlist1
+  menu set EUOEdit5 %indexlist2
+  gosub GetItemInfo %ITEMLIST1 %indexlist1
+  menu set EUOEdit6 #RESULT
+  gosub GetItemInfo %ITEMLIST2 %indexlist2
+  menu set EUOEdit7 #RESULT
+return
+;---------------------------------------------
+sub GetName
+  event property %1
+  str pos #PROPERTY $ 1
+  set #STRRES #STRRES - 1
+  str left #PROPERTY #STRRES
+return #STRRES
+;---------------------------------------------
+; %1 - string
+; %2 - index
+; finds the indexed event property of strings delimited with "_"
+sub GetItemInfo
+  gosub GetItemFindID %1 %2
+  gosub GetName #RESULT
+return #RESULT
+;---------------------------------------------
+; %1 - string
+; %2 - index
+; finds the indexed event property of strings delimited with "_"
+sub GetItemFindID
+  set %str %1
+  set %index %2
+  if %index = 0
+    return N/A
+  if %index = 1
+  {
+    str pos %str _ %index
+    set #STRRES #STRRES - 1
+    str left %str #STRRES
+    return #STRRES
+  }
+  set %temp %index - 1
+  str pos %str _ %temp
+  str del %str 1 #STRRES
+  set %tempstr #STRRES
+  str pos %tempstr _ 1
+  set #STRRES #STRRES - 1
+  str left %tempstr #STRRES
+return #STRRES
+;---------------------------------------------
+sub AddItem
+  set #TARGCURS 1
+  AddItem_loop1:
+  if #TARGCURS = 1
+    goto AddItem_loop1
+  
+  set %item #LTARGETID
+  if %item in %ITEMLIST1 || %item in %ITEMLIST2
+  {
+    display ok You have already selected to loot this item
+    return
+  }
+  
+  if %ITEMLIST1 = N/A
+    set %ITEMLIST1 %item , _
+  else
+    set %ITEMLIST1 %ITEMLIST1 , %item , _
+  set %countlist1 %countlist1 + 1
+  set %indexlist1 %countlist1
+  gosub UpdateItemScreen
+return
+;---------------------------------------------
+sub DeleteItem
+  if %indexlist1 = 0 || %countlist1 = 0
+    return
+  str pos %ITEMLIST1 _ %indexlist1
+  set %end #STRRES
+  if %indexlist1 = 1
+  {
+    str pos %ITEMLIST1 _ %indexlist1
+    str del %ITEMLIST1 1 #STRRES
+    set %ITEMLIST1 #STRRES
+  }
+  else
+  {
+    str pos %ITEMLIST1 _ %indexlist1
+    set #STRRES #STRRES - 1
+    str del %ITEMLIST1 1 #STRRES
+    set %tempstr1 #STRRES
+    
+    set %temp %indexlist1 - 1
+    str pos %ITEMLIST1 _ %temp
+    set #STRRES #STRRES - 1
+    str left %ITEMLIST1 #STRRES
+    set %tempstr2 #STRRES
+    set %ITEMLIST1 %tempstr2 , %tempstr1
+    set %indexlist1 %indexlist1 - 1
+  }
+  set %countlist1 %countlist1 - 1
+  gosub UpdateItemScreen
+return
+;---------------------------------------------
+sub DeletePriorityItem
+  if %indexlist2 = 0 || %countlist2 = 0
+    return
+  str pos %ITEMLIST2 _ %indexlist2
+  set %end #STRRES
+  if %indexlist2 = 1
+  {
+    str pos %ITEMLIST2 _ %indexlist2
+    str del %ITEMLIST2 1 #STRRES
+    set %ITEMLIST2 #STRRES
+  }
+  else
+  {
+    str pos %ITEMLIST2 _ %indexlist2
+    set #STRRES #STRRES - 1
+    str del %ITEMLIST2 1 #STRRES
+    set %tempstr1 #STRRES
+
+    set %temp %indexlist2 - 1
+    str pos %ITEMLIST2 _ %temp
+    set #STRRES #STRRES - 1
+    str left %ITEMLIST2 #STRRES
+    set %tempstr2 #STRRES
+    set %ITEMLIST2 %tempstr2 , %tempstr1
+    set %indexlist2 %indexlist2 - 1
+  }
+  set %countlist2 %countlist2 - 1
+  gosub UpdateItemScreen
+return
+;---------------------------------------------
+sub AddPriorityItem
+  set #TARGCURS 1
+  AddPriorityItem_loop1:
+  if #TARGCURS = 1
+    goto AddPriorityItem_loop1
+
+  set %item #LTARGETID
+  if %item in %ITEMLIST1 || %item in %ITEMLIST2
+  {
+    display ok You have already selected to loot this item
+    return
+  }
+
+  if %ITEMLIST2 = N/A
+    set %ITEMLIST2 %item , _
+  else
+    set %ITEMLIST2 %ITEMLIST2 , %item , _
+  set %countlist2 %countlist2 + 1
+  set %indexlist2 %countlist2
+  gosub UpdateItemScreen
+return
+;---------------------------------------------
+sub MonitorSign
+  if ( #CONTNAME = waiting_gump && #CONTSIZE = 203_121 ) || #CONTNAME = MainMenu_gump
+  {
+    set %condition Offline
+    menu set EUOEdit9 %condition
+    menu delete EUOButton10
+    menu Font BGColor BtnFace
+    menu Button EUOButton10 176 84 95 25 Start Monitoring
+    set %monitor_active #FALSE
+    menu Font BGColor ScrollBar
+    menu set EUOEdit1 House sign monitoring stopped!
+    gosub LogStateChange
+    return
+  }
+  finditem %housesign G
+  if #FINDKIND = -1
+  {
+    set %condition It's , #SPC , Gone!!
+    menu set EUOEdit9 %condition
+    gosub StartLooting ; house sign is gone, start looting
+    return
+  }
+  event property %housesign
+  str pos #PROPERTY Owner:
+  str Right #PROPERTY #STRRES
+;  set #STRRES #PROPERTY
+  if Slightly in #strRes && %condition <> Slightly
+  {
+    set %condition Slightly
+    menu set EUOEdit9 %condition
+    gosub LogStateChange
+  }
+  if Somewhat in #strRes && %condition <> Somewhat 
+  {
+    set %condition Somewhat
+    menu set EUOEdit9 %condition
+    gosub LogStateChange
+  }
+  if Fairly in #strRes && %condition <> Fairly
+  {
+    set %condition Fairly
+    menu set EUOEdit9 %condition
+    gosub LogStateChange
+  }
+  if Greatly in #strRes && %condition <> Greatly
+  {
+    set %condition Greatly
+    menu set EUOEdit9 %condition
+    gosub LogStateChange
+  }
+  if Collapsing in #strRes && %condition <> Collapsing
+  {
+    set %condition Collapsing
+    menu set EUOEdit9 %condition
+    gosub LogStateChange
+  }
+return
+;---------------------------------------------
+sub LogStateChange
+  gosub ConvertDailyTime #TIME
+  set %ctime #RESULT
+  gosub ConvertDate #DATE
+  set %cdate #RESULT
+  execute cmd.exe /c echo Date %cdate Time %ctime , #spc , condition , #spc , changed , #spc , to , #spc , %condition , #SPC , >> %logfile
+return
+
+
+; start looting things that are close
+;---------------------------------------------
+sub StartLooting
+  set #LPC 10000
+  gosub SyncTextScan
+  
+  gosub RunAndGrabItem %ITEMLIST2  ; priority list
+  ignoreitem reset
+  gosub RunAndGrabItem %ITEMLIST2 , _ , %ITEMLIST1  ; normal list + priority list leftovers
+
+;  display ok Looting complete!
+  menu set EUOEdit1 Looting complete!
+  sound
+  set %monitor_active #FALSE
+  set #LPC 10
+return
+; --------------------------------
+sub RunAndGrabItem
+set %list %1
+set %lockeddown $ , Locked , #SPC , down
+gosub SyncTextScan
+RunAndGrabItem_loop1:
+  finditem %list G
+  if #FINDKIND <> -1
+  {
+    event pathfind #FINDX #FINDY #FINDZ
+    set %lastfindid #FINDID
+    finditem %list G_2
+    if #FINDKIND <> -1
+    {
+      if %lastfindid <> #FINDID
+      {
+        event pathfind #FINDX #FINDY #FINDZ
+        wait 10
+      }
+      gosub GrabItem
+      goto RunAndGrabItem_skip1
+    }
+    wait 10
+    finditem %lastfindid G_2
+    if #FINDKIND <> -1
+      gosub GrabItem
+    goto RunAndGrabItem_loop1
+  }
+return
+; --------------------------------
+sub GrabItem
+  exevent drag #FINDID #FINDSTACK
+  wait 10
+  gosub FindValidText you_can_not_pick
+  if #RESULT = #TRUE
+  {
+    ignoreitem #FINDID
+    return
+  }
+  gosub FindValidText can't_get_there
+  if #RESULT = #TRUE
+  {
+    ignoreitem #FINDID
+    return
+  }
+  gosub FindValidText that_is_too_far
+  if #RESULT = #TRUE
+  {
+    ignoreitem #FINDID
+    return
+  }
+  if #WEIGHT > #MAXWEIGHT
+  {
+    exevent dropg #CHARPOSX #CHARPOSY #CHARPOSZ
+    ignoreitem #FINDID
+    return
+  }
+  exevent dropc #BACKPACKID
+  wait 10
+  ignoreitem #FINDID
+return
+; --------------------------------
+sub StayOnline
+  if #SCNT > ( %delaytimer + %delay_max )
+  {
+    set %delaycounter 0
+    event macro 8 7 ; open backpack
+    set %delaytimer #SCNT
+    if %monitor_active = #TRUE
+    {
+      gosub ConvertDailyTime #TIME
+      set %ctime #RESULT
+      gosub ConvertDate #DATE
+      set %cdate #RESULT
+      execute cmd.exe /c echo Date %cdate Time %ctime ----Status , #spc , %condition >> %logfile
+    }
+  }
+return
+;-------------------------------------------------------------------------------
+; %1 = ConvertDate  changes date to MM/DD/YY format
+sub ConvertDate
+  str Mid %1 3 2
+  set %tempstr #STRRES , /
+  str Mid %1 5 2
+  set %tempstr %tempstr , #STRRES , /
+  str Mid %1 1 2
+  set %tempstr %tempstr , #STRRES
+return %tempstr
+
+;-------------------------------------------------------------------------------
+; %1 = ConvertDailyTime  changes date to HH:MM:SS
+sub ConvertDailyTime
+  set %ampm AM
+  str Mid %1 1 2
+  if #STRRES >= 12
+  {
+    set #STRRES #STRRES - 12
+    set %ampm PM
+  }
+  set %tempstr #STRRES , :
+  str Mid %1 3 2
+  set %tempstr %tempstr , #STRRES , :
+  str Mid %1 5 2
+  set %tempstr %tempstr , #STRRES , #spc , %ampm
+return %tempstr
+;-------------------------------------------------------------------------------
+; Brings %_jindex up to the most recent #journal entry
+sub SyncTextScan
+  set %_jindex #jindex + 1
+return
+;-------------------------------------------------------------------------------
+sub FindValidText
+  if %_jindex = N/A
+  {
+    set %_jindex #jindex
+  }
+  FindValidText_loop1:
+    if #jindex >= %_jindex
+    {
+      scanjournal %_jindex
+      if %1 in #journal
+      {
+        if :_ , %1 notin #journal
+        {
+          set %_jindex %_jindex + 1
+          return #TRUE
+        }
+      }
+      set %_jindex %_jindex + 1
+      goto FindValidText_loop1
+    }
+return #FALSE
+;-------------------------------------------------------------------------------
+; %1 = string to search for
+; returns #TRUE for match, #FALSE for no match
+;  Will not advance %_jindex pointer to allow for scanning journal history for more than one search.
+;  Also searches for : , #SPC in journal entry to be sure someone isn't spamming the text
+sub FindValidTextNoAdvance
+  if %_jindex = N/A
+  {
+    set %_jindex #jindex
+  }
+  set %temp_jindex %_jindex
+  FindValidTextNoAdvance_loop1:
+    if %temp_jindex <= #jindex
+    {
+      scanjournal %temp_jindex
+      if %1 in #journal
+      {
+        if :_ , %1 notin #journal
+        {
+          set %temp_jindex %temp_jindex + 1
+          return #TRUE
+        }
+      }
+      set %temp_jindex %temp_jindex + 1
+      goto FindValidTextNoAdvance_loop1
+    }
+return #FALSE
+
+;--------- EasyUO Menu Designer Code Begin ---------
+sub showEUOMenu1
+	menu Clear
+	menu Window Title TrailMyx's IDOC Monitor/Looter v1.0c
+	menu Window Color BtnFace
+	menu Window Size 454 161
+	menu Font Transparent #true
+	menu Font Align Right
+	menu Font Name MS Sans Serif
+	menu Font Size 8
+	menu Font Style
+	menu Font Color WindowText
+	menu Font Transparent #false
+	menu Font Align Left
+	menu Text EUOLabel1 24 140 Status:
+	menu Text EUOLabel2 60 8 Normal Items
+	menu Text EUOLabel3 60 32 Priority Items
+	menu Text EUOLabel4 312 116 Sign Status:
+	menu Text EUOLabel5 288 88 Update Interval(sec):
+	menu Text EUOLabel6 4 116 Sign Name:
+	menu Button EUOButton1 4 56 79 25 Add Item
+	menu Button EUOButton2 88 56 79 25 Add Priority
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit1 64 136 241 Status
+	menu Font BGColor BtnFace
+	menu Button EUOButton3 176 56 95 25 Target Sign
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit2 4 4 49 0
+	menu Edit EUOEdit3 4 28 49 0
+	menu Font BGColor BtnFace
+	menu Button EUOButton4 132 4 23 21 <
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit4 216 4 49 0
+	menu Font BGColor BtnFace
+	menu Button EUOButton5 188 4 23 21 >
+	menu Button EUOButton6 132 28 23 21 <
+	menu Button EUOButton7 188 28 23 21 >
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit5 216 28 49 0
+	menu Edit EUOEdit6 272 4 177 None
+	menu Edit EUOEdit7 272 28 177 None
+	menu Font BGColor White
+	menu Edit EUOEdit8 392 84 37 %delay_max
+	menu Font BGColor BtnFace
+	menu Button EUOButton8 4 84 79 25 Delete Item
+	menu Button EUOButton9 88 84 79 25 Delete Priority
+	menu Button EUOButton10 176 84 95 25 Begin Monitoring
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit9 372 112 77 Slightly
+	menu Font BGColor BtnFace
+	menu Button EUOButton11 160 4 23 21 G
+	menu Button EUOButton12 160 28 23 21 G
+	menu Button EUOButton13 364 56 83 25 Begin Looting
+	menu Button EUOButton14 276 56 83 25 Save Loot File
+	menu Font BGColor ScrollBar
+	menu Edit EUOEdit10 64 112 241 Name
+	menu Font BGColor BtnFace
+	menu Check EUOCheckBox1 316 140 113 17 #true Stay Hidden
+	menu Show 421 270
+return
+;--------- EasyUO Menu Designer Code End ---------
+
+
