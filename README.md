@@ -1,4 +1,4 @@
-##Ultima Online Scripts for OrionUO, UOS/Steam and Razor Enhanced. 99% of these are partially/completly not made by me. Some might be from freeshards and need changes for OSI.
+##Ultima Online Scripts for OrionUO, UOS/Steam, EASYUO and Razor Enhanced. 99% of these are partially/completly not made by me. Some might need changes.
 
 //
 
